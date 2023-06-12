@@ -33,9 +33,33 @@ App.get('/api/users',(req,res)=>{
     });
 });
 
+App.post('/api/users',(req,res)=>{
+    const { body } = req;
+    connection.query('INSERT into users(`username`,`email`,`password`) values (?,?,?)',[
+        body.username,body.email,body.password
+    ],(err,r)=>{
+        connection.query('select * from users where id = ?',[r.insertId],(err,result)=>{
+            res.json({'message':'Users Added !',user:result[0]});
+        });
+    });
+});
+
 App.get('/api/bookings',(req,res)=>{
     connection.query('select * from bookings',(err,result)=>{
         res.json(result);
+    });
+});
+
+App.post('/api/bookings',(req,res)=>{
+    const { body } = req;
+    connection.query('INSERT into bookings values (NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',[
+        body.user_id,body.flight_id,body.type,body.depart,body.arrival,body.from,
+        body.to,body.class,body.specialReq,body.lastName,body.firstName,body.email,
+        body.phone,body.numberTickets
+    ],(err,r)=>{
+        connection.query('select * from bookings where id = ?',[r.insertId],(err,result)=>{
+            res.json({'message':'Booking Added !',user:result[0]});
+        });
     });
 });
 
